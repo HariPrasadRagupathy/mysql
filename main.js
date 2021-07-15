@@ -1,5 +1,5 @@
 function main(){
-	console.log("Hello goorm!");
+	console.log("Hello goorm! check");
 }
 
 main();
