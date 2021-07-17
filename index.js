@@ -1,6 +1,15 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql');
+
+//Routes
+const event_route = require('./routes/event');
+
+
+//Use
+app.use('/eventsAll',event_route);
+
+
 const connection = mysql.createConnection({
 	host:'localhost',
 	user:'root',
