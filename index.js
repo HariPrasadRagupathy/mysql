@@ -1,34 +1,21 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql');
+const sql = require('./config/db.js');
 
 //Routes
 const event_route = require('./routes/event');
 
 
 //Use
-app.use('/eventsAll',event_route);
+app.use('/eventsAll', event_route);
 
-
-const connection = mysql.createConnection({
-	host:'localhost',
-	user:'root',
-	password : 'Hari1988',
-	database:'event_db'
-});
-
-connection.connect((err)=>{
-	if(err) throw err;
-	console.log('connected');
-})
 
 app.get('/',(req,res)=>{
 	
 	var data;
 	
-
-
-connection.query('SELECT * FROM user_table', (err,rows) => {
+sql.query('SELECT * FROM user_table', (err,rows) => {
   if(err) {
 	  res.status(400).send('Error in database');
   }
