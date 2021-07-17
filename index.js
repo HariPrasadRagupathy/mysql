@@ -7,30 +7,38 @@ const connection = mysql.createConnection({
 	database:'event_db'
 });
 
-
-
-app.get('/',(req,res)=>{
-	connection.connect((err)=>{
+connection.connect((err)=>{
 	if(err) throw err;
 	console.log('connected');
 })
 
-connection.query('SELECT * FROM user_table', (err,rows) => {
-  if(err) throw err;
+app.get('/',(req,res)=>{
+	
+	var data;
+	
 
-  console.log('Data received from Db:');
-  console.log(rows);
+
+connection.query('SELECT * FROM user_table', (err,rows) => {
+  if(err) {
+	  res.status(400).send('Error in database');
+  }
+  else
+  {
+    console.log('Data received from Db:');
+	data = JSON.stringify(rows);	  
+	res.send(data);
+  }
+
+ 
 });
 
-	connection.end((err) => {
+});
+
+/*	connection.end((err) => {
   // The connection is terminated gracefully
   // Ensures all remaining queries are executed
   // Then sends a quit packet to the MySQL server.
-});
-
-	
-	res.send(rows);
-});
+});*/
 
 
 
