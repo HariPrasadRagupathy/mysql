@@ -19,6 +19,9 @@ exports.findAll = (req, res) => {
 };
 
 exports.create = (req,res) =>{
+
+    console.log(req.body.eventId);
+
     if(!req.body)
     {
         res.status(400).send({
@@ -27,17 +30,17 @@ exports.create = (req,res) =>{
     }
 
     const event = new Event({
-    eventId = event.eventId;
-    eventName = event.eventName;
-    eventImg = event.eventImg;
-    eventTypeId = event.eventTypeId;
-    categoryId = event.categoryId;
-    hostId = event.hostId;
-    eventDate = event.eventDate;
-    eventTime = event.eventTime;
-    eventDuration = event.eventDuration;
-    isRepeatable = event.isRepeatable;
-    eventDescription = event.eventDescription;
+    //eventId : req.body.eventId,
+    eventName : req.body.eventName,
+    eventImgUrl : req.body.eventImgUrl,
+    eventTypeId : req.body.eventTypeId,
+    categoryId : req.body.categoryId,
+    hostId : req.body.hostId,
+    eventDate : req.body.eventDate,
+    eventTime : req.body.eventTime,
+    eventDuration : req.body.eventDuration,
+    isEventRepetable : req.body.isEventRepetable,
+    eventDescription : req.body.eventDescription
     })
 
     Event.create(event,(err, data)=>{

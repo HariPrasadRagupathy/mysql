@@ -5,5 +5,7 @@ const event = require("../controllers/event.controller.js")
 
 router.get('/', event.findAll);
 
+router.post('/',event.create);
+
 
 module.exports = router;

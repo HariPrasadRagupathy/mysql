@@ -8,6 +8,7 @@ const event_route = require('./routes/event');
 
 
 //Use
+app.use(express.json());
 app.use('/eventsAll', event_route);
 
 

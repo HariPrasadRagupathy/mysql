@@ -6,14 +6,14 @@ const sql = require("../config/db.js");
 const Event = function (event) {
     this.eventId = event.eventId;
     this.eventName = event.eventName;
-    this.eventImg = event.eventImg;
+    this.eventImgUrl = event.eventImgUrl;
     this.eventTypeId = event.eventTypeId;
     this.categoryId = event.categoryId;
     this.hostId = event.hostId;
     this.eventDate = event.eventDate;
     this.eventTime = event.eventTime;
     this.eventDuration = event.eventDuration;
-    this.isRepeatable = event.isRepeatable;
+    this.isEventRepetable = event.isEventRepetable;
     this.eventDescription = event.eventDescription;
 };
 
