@@ -30,4 +30,18 @@ Event.getAll = result => {
     });
 };
 
+Event.create = (newEvent,result) => {
+    sql.query("INSERT INTO event_db.events_table SET ?", newEvent, (err,res)=>{
+        if(err){
+            console.log("error: ",err);
+            result(err,null);
+            return;
+        }
+
+        console.log("Created Event", {id:res.eventId, ...newEvent});
+        result(null,{id : res.eventId, ...newEvent});
+    });
+
+}
+
 module.exports = Event;
