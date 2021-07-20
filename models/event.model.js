@@ -30,6 +30,71 @@ Event.getAll = result => {
     });
 };
 
+
+Event.findByEventId = (eventId,result) => {
+	sql.query(`SELECT * FROM event_db.events_table WHERE eventId=${eventId}`, (err,res)=>{
+		if(err)
+		{
+			console.log("error",err);
+			 if (err.code === 'ER_BAD_FIELD_ERROR')
+			result({kind:"bad_request"},null);
+			return;
+		}
+	
+	if(res.length){
+		console.log("Found Events: ",res[0]);
+		result(null,res[0]);
+		return;
+	}
+	
+	result({kind:"not found"},null);
+
+	});
+};
+
+Event.findByCategoryId = (categoryId, result) =>{
+	sql.query(`SELECT * FROM event_db.events_table WHERE categoryId=${categoryId}`,(err,res)=>{
+		if(err)
+			{
+				console.log("error",err);
+				if(err.code === 'ER_BAD_FIELD_ERROR')
+					result({kind:"bad_request"},null);
+				return
+			}
+		
+		if(res.length>0)
+			{
+			console.log("Found Events: ",res);
+			result(null,res);
+			return;
+			}
+		
+		result({kind:"not found"},null);
+	});
+};
+
+Event.findByEventTypeID = (eventTypeId,result) =>{
+	sql.query(`SELECT * FROM event_db.events_table WHERE eventTypeId=${eventTypeId}`,(err,res)=>{
+		if(err)
+			{
+				console.log("error",err);
+				if(err.code === 'ER_BAD_FIELD_ERROR')
+						result({kind:"bad bad_request"},null);
+				return
+			}
+		
+		if(res.length>0)
+			{
+				console.log("Found Events: ",res);
+				result(null,res);
+				return;
+			}
+		
+		result({kind:"not found"},null);
+	});
+}
+	
+
 Event.create = (newEvent,result) => {
     sql.query("INSERT INTO event_db.events_table SET ?", newEvent, (err,res)=>{
         if(err){
