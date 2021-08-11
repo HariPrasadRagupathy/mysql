@@ -1,4 +1,5 @@
 const Event = require("../models/event.model.js");
+const Joi = require('joi');
 
 
 
@@ -32,6 +33,29 @@ exports.findAll = (req, res) => {
 exports.findByEventId = (req, res) => {
 		var dataObject = {};
 	var responseObject = {};
+	
+	
+	const schema = Joi.object({
+		eventId : Joi.string()
+					.alphanum()
+					.min(3)
+					.required()
+	});
+	
+	const {error,value}= schema.validate({eventId : req.params.eventId});
+	
+	console.log(error);
+	
+	if(error)
+		{
+				res.status(400);
+				dataObject['event'] = null;
+				responseObject['statusCode'] = res.statusCode;
+				responseObject['message'] = error.details[0].message;
+				responseObject['data'] = dataObject;
+				res.send(responseObject);
+		}
+	
 	
 	Event.findByEventId(req.params.eventId,(err,data)=>{
 		if(err){
