@@ -59,33 +59,33 @@ exports.findByEventId = (req, res) => {
 	
 	Event.findByEventId(req.params.eventId,(err,data)=>{
 		if(err){
+				dataObject['event'] = null;
 			if(err.kind === "not found")
 			{
 				res.status(404);
-				dataObject['event'] = null;
 				responseObject['statusCode'] = res.statusCode;
 				responseObject['message'] = "Record not Found";
 				responseObject['data'] = dataObject;
-				res.send(responseObject);
+				
 			}
 			else if(err.kind === "bad_request")
 			{
-				res.status(400);
-				dataObject['event'] = null;
+				res.status(400);	
 				responseObject['statusCode'] = res.statusCode;
 				responseObject['message'] = "Bad Request";
 				responseObject['data'] = dataObject;
-				res.send(responseObject);
+				
 			}
 			else
 			{
 				res.status(500);
-				dataObject['event'] = null;
+			
 				responseObject['statusCode'] = res.statusCode;
 				responseObject['message'] = "Internal Server Error"
 				responseObject['data'] = dataObject;
-				res.send(responseObject);
+				
 			}
+			res.send(responseObject);
 		}
 		else
 		{
