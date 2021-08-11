@@ -33,71 +33,100 @@ exports.findAll = (req, res) => {
 exports.findByEventId = (req, res) => {
 		var dataObject = {};
 	var responseObject = {};
+	var message;
+	
+ const {error} = validateEventId(req);
 	
 	
-	const schema = Joi.object({
-		eventId : Joi.string()
-					.alphanum()
-					.min(3)
-					.required()
-	});
 	
-	const {error,value}= schema.validate({eventId : req.params.eventId});
-	
-	console.log(error);
-	
-	if(error)
+		if(!error)
 		{
-				res.status(400);
-				dataObject['event'] = null;
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = error.details[0].message;
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
+			Event.findByEventId(req.params.eventId,(err,data)=>{
+		if(!err){
+			dataObject['event'] = data;
+			message = "success";
+			responseObject['data'] = dataObject;
+	     
 		}
-	
-	
-	Event.findByEventId(req.params.eventId,(err,data)=>{
-		if(err){
-				dataObject['event'] = null;
+		else
+		{	
+			dataObject['event'] = null;
 			if(err.kind === "not found")
 			{
 				res.status(404);
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Record not Found";
-				responseObject['data'] = dataObject;
-				
+				message = "Record not Found";
+			
 			}
 			else if(err.kind === "bad_request")
 			{
 				res.status(400);	
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Bad Request";
-				responseObject['data'] = dataObject;
-				
+				message = "Bad Request";		
 			}
 			else
 			{
 				res.status(500);
-			
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Internal Server Error"
-				responseObject['data'] = dataObject;
-				
+				message = "Internal Server Error"
 			}
-			res.send(responseObject);
-		}
-		else
-		{
-			dataObject['event'] = data;
-			responseObject['statusCode'] = res.statusCode;
-			responseObject['message'] = "success";
-			responseObject['data'] = dataObject;
-            res.send(responseObject);
+			//res.send(responseObject);
 			
+		}});
 		}
+	else
+		{
+				res.status(400);
+			message = error.details[0].message;
+				dataObject['event'] = null;
+				
+		}
+	
+				responseObject['statusCode'] = res.statusCode;
+				responseObject['message'] = message;
+				responseObject['data'] = dataObject;
+				return res.send(responseObject);
+	
+	
+	// Event.findByEventId(req.params.eventId,(err,data)=>{
+	// 	if(err){
+	// 			dataObject['event'] = null;
+	// 		if(err.kind === "not found")
+	// 		{
+	// 			res.status(404);
+				
+	// 			responseObject['statusCode'] = res.statusCode;
+	// 			responseObject['message'] = "Record not Found";
+	// 			responseObject['data'] = dataObject;
+				
+	// 		}
+	// 		else if(err.kind === "bad_request")
+	// 		{
+	// 			res.status(400);	
+	// 			responseObject['statusCode'] = res.statusCode;
+	// 			responseObject['message'] = "Bad Request";
+	// 			responseObject['data'] = dataObject;
+				
+	// 		}
+	// 		else
+	// 		{
+	// 			res.status(500);
+			
+	// 			responseObject['statusCode'] = res.statusCode;
+	// 			responseObject['message'] = "Internal Server Error"
+	// 			responseObject['data'] = dataObject;
+				
+	// 		}
+	// 		res.send(responseObject);
+	// 	}
+	// 	else
+	// 	{
+	// 		dataObject['event'] = data;
+	// 		responseObject['statusCode'] = res.statusCode;
+	// 		responseObject['message'] = "success";
+	// 		responseObject['data'] = dataObject;
+	// res.send(responseObject);
+			
+	// 	}
 						
-	});
+	// });
 };
 
 exports.findByCategory = (req,res)=>{
@@ -230,4 +259,22 @@ exports.create = (req,res) =>{
             });
         else res.send(data);
     });
+}
+
+
+
+
+//Validation
+
+function validateEventId(req)
+{
+		
+	const schema = Joi.object({
+		eventId : Joi.string()
+					.alphanum()
+					.min(3)
+					.required()
+	});
+	
+	return schema.validate({eventId : req.params.eventId});
 }

@@ -31,6 +31,9 @@ Event.getAll = result => {
 };
 
 
+
+
+
 Event.findByEventId = (eventId,result) => {
 	sql.query(`SELECT * FROM event_db.events_table WHERE eventId=${eventId}`, (err,res)=>{
 		if(err)
