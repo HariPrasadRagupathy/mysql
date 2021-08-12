@@ -8,7 +8,11 @@ const Joi = require('joi');
 exports.findAll = (req, res) => {
 	var dataObject = {};
 	var responseObject = {};
-	
+	var message = "hello";
+	GeneralResponse.sendResponse(200,message, dataObject, callback)=>{
+		
+	}
+	);
 	
     Event.getAll((err,data)=>{
         if(err)
