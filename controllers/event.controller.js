@@ -1,4 +1,6 @@
 const Event = require("../models/event.model.js");
+const GeneralResponse = require("../models/response.model.js");
+
 const Joi = require('joi');
 
 
@@ -18,6 +20,7 @@ exports.findAll = (req, res) => {
         }
         else
         {	
+			
             dataObject['eventList'] = data;
 			responseObject['statusCode'] = res.statusCode;
 			responseObject['message'] = "success";
@@ -41,92 +44,52 @@ exports.findByEventId = (req, res) => {
 	
 		if(!error)
 		{
-			Event.findByEventId(req.params.eventId,(err,data)=>{
-		if(!err){
-			dataObject['event'] = data;
-			message = "success";
-			responseObject['data'] = dataObject;
-	     
-		}
-		else
-		{	
-			dataObject['event'] = null;
-			if(err.kind === "not found")
-			{
-				res.status(404);
-				message = "Record not Found";
-			
-			}
-			else if(err.kind === "bad_request")
-			{
-				res.status(400);	
-				message = "Bad Request";		
-			}
-			else
-			{
-				res.status(500);
-				message = "Internal Server Error"
-			}
-			//res.send(responseObject);
-			
-		}});
+			Event.findByEventId(req.params.eventId, (err, data) => {
+				if (data!=null) {
+					console.log("yes data");
+					console.log(data);
+					dataObject['event'] = data;
+					message = "success";
+				}
+				else {
+					console.log("error");
+					dataObject['event'] = null;
+					console.log(err)
+					if (err.kind === "not found") {
+						res.status(404);
+						message = "Record not Found";
+						console.log(message)
+					}
+					else if (err.kind === "bad_request") {
+						res.status(400);
+						message = "Bad Request";
+					}
+					else {
+						res.status(500);
+						message = "Internal Server Error"
+					}
+					
+				}
+				responseObject['statusCode'] = res.statusCode;
+					responseObject['message'] = message;
+					responseObject['data'] = dataObject;
+					console.log(message)
+					res.send(responseObject);
+			});
 		}
 	else
 		{
 				res.status(400);
-			message = error.details[0].message;
+				message = error.details[0].message;
 				dataObject['event'] = null;
+
+				responseObject['statusCode'] = res.statusCode;
+				responseObject['message'] = message;
+				console.log(message)
+				res.send(responseObject);
 				
 		}
 	
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = message;
-				responseObject['data'] = dataObject;
-				return res.send(responseObject);
-	
-	
-	// Event.findByEventId(req.params.eventId,(err,data)=>{
-	// 	if(err){
-	// 			dataObject['event'] = null;
-	// 		if(err.kind === "not found")
-	// 		{
-	// 			res.status(404);
-				
-	// 			responseObject['statusCode'] = res.statusCode;
-	// 			responseObject['message'] = "Record not Found";
-	// 			responseObject['data'] = dataObject;
-				
-	// 		}
-	// 		else if(err.kind === "bad_request")
-	// 		{
-	// 			res.status(400);	
-	// 			responseObject['statusCode'] = res.statusCode;
-	// 			responseObject['message'] = "Bad Request";
-	// 			responseObject['data'] = dataObject;
-				
-	// 		}
-	// 		else
-	// 		{
-	// 			res.status(500);
-			
-	// 			responseObject['statusCode'] = res.statusCode;
-	// 			responseObject['message'] = "Internal Server Error"
-	// 			responseObject['data'] = dataObject;
-				
-	// 		}
-	// 		res.send(responseObject);
-	// 	}
-	// 	else
-	// 	{
-	// 		dataObject['event'] = data;
-	// 		responseObject['statusCode'] = res.statusCode;
-	// 		responseObject['message'] = "success";
-	// 		responseObject['data'] = dataObject;
-	// res.send(responseObject);
-			
-	// 	}
-						
-	// });
 };
 
 exports.findByCategory = (req,res)=>{
@@ -270,9 +233,9 @@ function validateEventId(req)
 {
 		
 	const schema = Joi.object({
-		eventId : Joi.string()
-					.alphanum()
-					.min(3)
+		eventId : Joi.number()
+	
+					.integer()
 					.required()
 	});
 	
