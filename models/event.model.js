@@ -37,17 +37,18 @@ Event.findByEventId = (eventId,result) => {
 		{
 			console.log("error",err);
 			 if (err.code === 'ER_BAD_FIELD_ERROR')
-			result({kind:"bad_request"},null);
+			result({message:"bad_request",code:400},null);
+			 else
+				 result({message:"Internal Server Error",code:500},null);
 			return;
 		}
 	
 	if(res.length){
-		console.log("Found Events: ",res[0]);
 		result(null,res[0]);
 		return;
 	}
 	
-	result({kind:"not found"},null);
+	result({message:"Not found",code:400},null);
 
 	});
 };
@@ -58,7 +59,9 @@ Event.findByCategoryId = (categoryId, result) =>{
 			{
 				console.log("error",err);
 				if(err.code === 'ER_BAD_FIELD_ERROR')
-					result({kind:"bad_request"},null);
+					result({message:"bad_request",code:404},null);
+				else
+					result({message:"Internal Server Error",code:500},null);
 				return
 			}
 		
@@ -69,7 +72,7 @@ Event.findByCategoryId = (categoryId, result) =>{
 			return;
 			}
 		
-		result({kind:"not found"},null);
+		result({message:"not found",code:400},null);
 	});
 };
 
@@ -77,20 +80,20 @@ Event.findByEventTypeID = (eventTypeId,result) =>{
 	sql.query(`SELECT * FROM event_db.events_table WHERE eventTypeId=${eventTypeId}`,(err,res)=>{
 		if(err)
 			{
-				console.log("error",err);
 				if(err.code === 'ER_BAD_FIELD_ERROR')
-						result({kind:"bad bad_request"},null);
+						result({message:"Bad Request!",code:404},null);
+				else
+					result({message: "Internal Server Error!",code:500},null)
 				return
 			}
 		
 		if(res.length>0)
 			{
-				console.log("Found Events: ",res);
 				result(null,res);
 				return;
 			}
 		
-		result({kind:"not found"},null);
+		result({message:"Data Not Found!",code:400},null);
 	});
 }
 	

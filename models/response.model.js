@@ -9,9 +9,7 @@ const GeneralResponse = function (status, message, data) {
 };
 
 GeneralResponse.sendResponse = (status,message, data, callback) => {
-
-    console.log(message);
-    callback(new Response(this.status= status, this.message=message,this.data = data));
+    callback(new GeneralResponse(this.status= status, this.message=message,this.data = data));
 };
 
 module.exports = GeneralResponse;

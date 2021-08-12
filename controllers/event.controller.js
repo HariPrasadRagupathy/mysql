@@ -7,30 +7,23 @@ const Joi = require('joi');
 
 exports.findAll = (req, res) => {
 	var dataObject = {};
-	var responseObject = {};
-	var message = "hello";
-	GeneralResponse.sendResponse(200,message, dataObject, callback)=>{
-		
-	}
-	);
-	
+	var message;
+
     Event.getAll((err,data)=>{
         if(err)
         {
-            res.status(500).send({
-                message:
-                err.message || "Some error occurred while retrieving events." 
-            });
-        }
+            res.status(500)
+			message= err.message || "Some error occurred while retrieving events."
+			dataObject['eventList'] = null;
+		}
         else
-        {	
-			
+        {
             dataObject['eventList'] = data;
-			responseObject['statusCode'] = res.statusCode;
-			responseObject['message'] = "success";
-			responseObject['data'] = dataObject;
-            res.send(responseObject);
         }
+
+		GeneralResponse.sendResponse(res.statusCode,"success",dataObject,(data)=>{
+			res.send(data);
+		})
     
     });
 			
@@ -39,106 +32,66 @@ exports.findAll = (req, res) => {
 
 exports.findByEventId = (req, res) => {
 		var dataObject = {};
-		var responseObject = {};
 		var message;
-	
- 		const {error} = validateEventId(req);
-	
-	
-	
-		if(!error)
-		{
-			Event.findByEventId(req.params.eventId, (err, data) => {
-				if (data!=null) {
-					console.log("yes data");
-					console.log(data);
-					dataObject['event'] = data;
-					message = "success";
-				}
-				else {
-					console.log("error");
-					dataObject['event'] = null;
-					console.log(err)
-					if (err.kind === "not found") {
-						res.status(404);
-						message = "Record not Found";
-						console.log(message)
-					}
-					else if (err.kind === "bad_request") {
-						res.status(400);
-						message = "Bad Request";
-					}
-					else {
-						res.status(500);
-						message = "Internal Server Error"
-					}
-					
-				}
-				responseObject['statusCode'] = res.statusCode;
-					responseObject['message'] = message;
-					responseObject['data'] = dataObject;
-					console.log(message)
-					res.send(responseObject);
-			});
-		}
-		else
-		{
-				res.status(400);
-				message = error.details[0].message;
-				dataObject['event'] = null;
 
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = message;
-				console.log(message)
-				res.send(responseObject);
-				
+		const schema = Joi.object({
+			eventId : Joi.number()
+						.integer()
+						.required()
+		});
+
+		const {inValid} = schema.validate({eventId : req.params.eventId});
+
+ 		if(inValid)
+		{
+			res.status(400);
+			message = inValid.details[0].message;
+			dataObject['event'] = null;
+			return res.send(new GeneralResponse(res.statusCode,message,dataObject))
 		}
-	
+
+ 		Event.findByEventId(req.params.eventId, (err, data) => {
+				if(err)
+				{
+					dataObject['event'] = null;
+					res.status(err.code);
+					message = err.message;
+				}
+			   dataObject['event'] = data;
+			   message = "success";
+
+			   res.send(new GeneralResponse(res.statusCode,message,dataObject));
+ 		});
 };
 
 exports.findByCategory = (req,res)=>{
 	var dataObject = {};
-	var responseObject = {};
-	
+	var message;
+
+	const schema = Joi.object({
+		categoryId : Joi.number().required().integer()
+		})
+
+	const {inValid} = schema.validate({categoryId : req.params.categoryId})
+
+	if(inValid)
+	{
+		res.status(400)
+		message = inValid.details[0].message
+		dataObject['eventList']=null
+		return res.send(new GeneralResponse(res.statusCode,message,dataObject))
+	}
+
 	Event.findByCategoryId(req.params.categoryId,(err,data)=>{
 		if(err){
-			if(err.kind === 'not found')
-			{
-				res.status(404);
-				dataObject['eventList'] = null;	
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Data Not Found!";
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
-			}
-			else if(err.kind === 'bad_request')
-			{
-				res.status(400);
-				dataObject['eventList'] = null;
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Bad Request";
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
-				
-			}
-			else
-			{
-				res.status(500);
-				dataObject['eventList'] = null;
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Internal Server Error";
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
-				
-			}
+			dataObject['eventList']=null
+			res.status(err.code)
+			return res.send(new GeneralResponse(res.statusCode,err.message,dataObject))
 		}
 		else
 		{
 			dataObject['eventList']=data;
-			responseObject['statusCode'] = res.statusCode;
-			responseObject['message'] = "Success";
-			responseObject['data'] = dataObject;
-			res.send(responseObject);
+			res.send(new GeneralResponse(res.statusCode,"Success",dataObject));
 		}
 	});
 	
@@ -146,56 +99,61 @@ exports.findByCategory = (req,res)=>{
 
 exports.findByEventType = (req,res)=>{
 	var dataObject = {};
-	var responseObject = {};
+	var message;
+
+	const schema = Joi.object({
+		eventTypeId : Joi.number().integer().required().positive()
+	})
+
+	const {inValid} = schema.validate({eventTypeId : req.params.eventTypeId})
+
+	if(inValid)
+	{
+		res.status(400)
+		dataObject['eventList'] = null
+		return res.send(new GeneralResponse(res.statusCode,inValid.details[0].message,dataObject))
+	}
+
 	
 	Event.findByEventTypeID(req.params.eventTypeId,(err,data)=>{
 		if(err)
 		{
-			if(err.kind === 'not found')
-			{
-				res.status(404);
-				dataObject['eventList'] = null;
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Data Not Found!";
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
-			}
-			else if(err.kind === 'bad_request')
-			{
-				res.status(400);
-				dataObject['eventList'] = null;
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Bad Request!";
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
-			}
-			else
-			{
-				res.status(500);
-				dataObject['eventList'] = null;
-				responseObject['statusCode'] = res.statusCode;
-				responseObject['message'] = "Internal Server Error";
-				responseObject['data'] = dataObject;
-				res.send(responseObject);
-				
-			}
-				
+			res.status(err.code)
+			message = err.message
+			dataObject['eventList'] = null
 		}
 		else
 		{
 			dataObject['eventList'] = data;
-			responseObject['statusCode'] = res.statusCode;
-			responseObject['message'] = "Success";
-			responseObject['data'] = dataObject;
-			res.send(responseObject);
+			message = "Success"
 		}
+		res.send(new GeneralResponse(res.statusCode,message,dataObject));
 		
 	})
 }
 
 exports.create = (req,res) =>{
 
-    console.log(req.body.eventId);
+    var dataObject = {}
+	var message;
+
+    const schema = Joi.object().keys(
+		{
+			eventId : Joi.number().integer(),
+			eventName :  Joi.number().integer(),
+			eventImgUrl : Joi.number().integer(),
+			eventTypeId : Joi.number().integer(),
+			categoryId : Joi.number().integer(),
+			hostId : Joi.number().integer(),
+			eventDate : Joi.number().integer(),
+			eventTime : Joi.number().integer(),
+			eventDuration : Joi.number().integer(),
+			isEventRepetable : Joi.number().integer(),
+			eventDescription : Joi.number().integer()
+		}
+	)
+
+
 
     if(!req.body)
     {
@@ -218,30 +176,15 @@ exports.create = (req,res) =>{
     eventDescription : req.body.eventDescription
     })
 
-    Event.create(event,(err, data)=>{
+	const {inValid} = schema.validate(req.body)
+    console.log(inValid.details[0].message)
+  /*  Event.create(event,(err, data)=>{
         if(err)
             res.status(500).send({
                 message:
                     err.message || "Some error occurred"
             });
         else res.send(data);
-    });
+    });*/
 }
 
-
-
-
-//Validation
-
-function validateEventId(req)
-{
-		
-	const schema = Joi.object({
-		eventId : Joi.number()
-	
-					.integer()
-					.required()
-	});
-	
-	return schema.validate({eventId : req.params.eventId});
-}
