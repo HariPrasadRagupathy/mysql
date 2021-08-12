@@ -35,10 +35,10 @@ exports.findAll = (req, res) => {
 
 exports.findByEventId = (req, res) => {
 		var dataObject = {};
-	var responseObject = {};
-	var message;
+		var responseObject = {};
+		var message;
 	
- const {error} = validateEventId(req);
+ 		const {error} = validateEventId(req);
 	
 	
 	
@@ -77,7 +77,7 @@ exports.findByEventId = (req, res) => {
 					res.send(responseObject);
 			});
 		}
-	else
+		else
 		{
 				res.status(400);
 				message = error.details[0].message;

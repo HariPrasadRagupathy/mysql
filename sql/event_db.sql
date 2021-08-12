@@ -12,6 +12,12 @@ ADD COLUMN `user_name` VARCHAR(45) NULL AFTER `user_id`,
 ADD COLUMN `user_password` VARCHAR(45) NULL AFTER `user_name`,
 ADD COLUMN `user_professtion` VARCHAR(100) NULL AFTER `user_password`;
 
+ALTER TABLE `event_db`.`user_table` 
+ADD COLUMN `user_email` VARCHAR(45) NOT NULL AFTER `user_professtion`,
+ADD UNIQUE INDEX `user_email_UNIQUE` (`user_email` ASC) VISIBLE;
+;
+
+
 CHANGE COLUMN `user_professtion` `user_professtion` INT NULL DEFAULT NULL ;
 
 CREATE TABLE `event_db`.`EventType` (
