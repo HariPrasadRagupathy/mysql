@@ -97,7 +97,7 @@ Event.findByEventTypeID = (eventTypeId,result) =>{
 }
 
 Event.create = (newEvent,result) => {
-    sql.query("INSERT INTO event_db.events_table SET ?", newEvent, (err,res)=>{
+    sql.query(`INSERT INTO event_db.events_table SET ?`, newEvent, (err,res)=>{
         if(err){
             console.log("error: ",err);
             result(err,null);
