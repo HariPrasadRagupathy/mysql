@@ -4,7 +4,6 @@ const GeneralResponse = require("../models/response.model.js");
 const Joi = require('joi');
 
 
-
 exports.findAll = (req, res) => {
 	var dataObject = {};
 	var message;
@@ -28,7 +27,6 @@ exports.findAll = (req, res) => {
     });
 			
 };
-
 
 exports.findByEventId = (req, res) => {
 		var dataObject = {};
