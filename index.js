@@ -1,6 +1,14 @@
+const config = require('config');
 const express = require('express');
 const app = express();
 const mysql = require('mysql');
+
+
+
+if(!config.get('jwtPrivateKey')){
+	console.log("Fate Error : jwtPrivate key not defined");
+	process.exit(1);
+}
 
 
 //Routes

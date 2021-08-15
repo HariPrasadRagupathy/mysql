@@ -18,9 +18,7 @@ User.create = (newUser,result) => {
 			result(err,null);
 			return;
 		}
-		
-		console.log("Created User",{id:res.user_id,...newUser});
-		result(null,{id:res.user_id, ...newUser});
+		result(null,{id:res.insertId, ...newUser});
 	});
 }
 
@@ -45,6 +43,31 @@ User.findUserByEmail = (userEmail, result) =>{
 		
 		result({message:"not found",code:400},null)
 	});
+}
+
+
+User.findUserById = (userId,result)=>{
+	sql.query(`SELECT * FROM event_db.user_table WHERE user_id = ${userId}`,(err,res)=>{
+		if(err)
+		{
+			console.log(err)
+			if(err.code === 'ER_BAD_FIELD_ERROR')
+				result({message:"bad request",code:404},null);
+			else
+				result({message:"Internal Server Error",code:500},null)
+			return
+		}
+
+
+
+		if(res.length>0)
+		{
+			result(null,res[0]);
+			return;
+		}
+
+		result({message:"not found",code:400},null)
+	})
 }
 
 module.exports = User;

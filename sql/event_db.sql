@@ -21,7 +21,7 @@ ADD UNIQUE INDEX `user_email_UNIQUE` (`user_email` ASC) VISIBLE;
 
 MODIFY COLUMN `user_password` VARCHAR(1024) NULL AFTER `user_name`;
 
- ALTER TABLE `event_db`.`user_table` CHANGE COLUMN `user_professtion` `user_professtion` INT NULL DEFAULT NULL ;
+ ALTER TABLE `event_db`.`user_table` CHANGE COLUMN `user_professtion` `user_profession` INT NULL DEFAULT NULL ;
 
 CREATE TABLE `event_db`.`EventType` (
   `eventId` INT NOT NULL AUTO_INCREMENT,

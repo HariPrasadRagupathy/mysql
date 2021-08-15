@@ -20,9 +20,10 @@ exports.findAll = (req, res) => {
             dataObject['eventList'] = data;
         }
 
-		GeneralResponse.sendResponse(res.statusCode,"success",dataObject,(data)=>{
-			res.send(data);
-		})
+
+
+			res.send(new GeneralResponse(res.status,"success",dataObject));
+
     
     });
 			
