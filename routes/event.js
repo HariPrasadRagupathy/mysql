@@ -4,17 +4,17 @@ const router = express.Router();
 const event = require("../controllers/event.controller.js")
 
 //get
-router.get('/',auth, event.findAll);
+router.get('/', auth, event.findAll);
 
-router.get('/:eventId', event.findByEventId);
+router.get('/:eventId', auth,event.findByEventId);
 
-router.get('/byCategory/:categoryId',event.findByCategory);
+router.get('/byCategory/:categoryId',auth,event.findByCategory);
 
-router.get('/byEventType/:eventTypeId',event.findByEventType);
+router.get('/byEventType/:eventTypeId',auth,event.findByEventType);
 
 
 //post
-router.post('/',event.create);
+router.post('/',auth,event.create);
 
 
 module.exports = router;
